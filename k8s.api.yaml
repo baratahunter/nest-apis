@@ -1,0 +1,59 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: barata-api
+  namespace: barata
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: barata-api
+  template:
+    metadata:
+      labels:
+        app: barata-api
+    spec:
+      containers:
+        - name: barata-api
+          image: baratahunter/barata-api:latest
+          args: ["-d", "https://raw.githubusercontent.com/hugomcruz/files/main/mock-inventory.json"]
+          ports:
+            - containerPort: 3000
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: barata-api
+  namespace: barata
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: ClusterIP
+  selector:
+    app: barata-api
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: barata-api
+  namespace: barata
+spec:
+  tls:
+  - hosts:
+    - barata.api.border.berzuk.com
+  ingressClassName: nginx
+  rules:
+  - host: barata.api.border.berzuk.com
+    http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: barata-api
+                port:
+                  number: 80
