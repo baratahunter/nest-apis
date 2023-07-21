@@ -44,10 +44,10 @@ metadata:
 spec:
   tls:
   - hosts:
-    - barata-api.border.berzuk.com
+    - barata.api.border.berzuk.com
   ingressClassName: nginx
   rules:
-  - host: barata-api.border.berzuk.com
+  - host: barata.api.border.berzuk.com
     http:
         paths:
           - path: /
