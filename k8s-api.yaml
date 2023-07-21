@@ -2,7 +2,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: nest-api-deployment
+  name: barata-api
   namespace: barata
 spec:
   replicas: 1
@@ -25,7 +25,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: nest-api-service
+  name: barata-api
   namespace: barata
 spec:
   ports:
@@ -34,12 +34,12 @@ spec:
       targetPort: 3000
   type: ClusterIP
   selector:
-    app: nest-api
+    app: barata-api
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: nest-api-ingress
+  name: barata-api
   namespace: barata
 spec:
   tls:
@@ -54,6 +54,6 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: nest-api-service
+                name: barata-api
                 port:
                   number: 80
