@@ -1,0 +1,58 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nest-api-deployment
+  namespace: barata
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nest-api
+  template:
+    metadata:
+      labels:
+        app: nest-api
+    spec:
+      containers:
+        - name: nest-api
+          image: baratahunter/barata-api:latest
+          ports:
+            - containerPort: 3000
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nest-api-service
+  namespace: barata
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
+  type: ClusterIP
+  selector:
+    app: nest-api
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: nest-api-ingress
+  namespace: barata
+spec:
+  tls:
+  - hosts:
+    - barata-api.border.berzuk.com
+  ingressClassName: nginx
+  rules:
+  - host: barata-api.border.berzuk.com
+    http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nest-api-service
+                port:
+                  number: 80
